@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48f2fa68-fe9d-4632-83d2-98dbca66746f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/SoftDesk/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoftDesk/config/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="48f2fa68-fe9d-4632-83d2-98dbca66746f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
