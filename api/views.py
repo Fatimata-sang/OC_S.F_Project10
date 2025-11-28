@@ -46,7 +46,6 @@ from api.serializers import (
 # Mixin dont les views devront hériter afin de viser un serializer different
 # pour le détail
 class MultipleSerializerMixin:
-
     """
     actions :
     list : appel en GET  sur l’URL de liste ;
@@ -63,6 +62,10 @@ class MultipleSerializerMixin:
         'create',
         'update'
     ]
+
+    def __init__(self):
+        self.action = None
+
     def get_serializer_class(self):
         if self.action in self.detail_actions and self.detail_serializer_class is not None:
             return self.detail_serializer_class
@@ -72,6 +75,7 @@ class MultipleSerializerMixin:
 
 class RegisterView(APIView):
     permission_classes = []
+
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -81,25 +85,24 @@ class RegisterView(APIView):
 
 class ProjectViewset(MultipleSerializerMixin,
                      ModelViewSet):
-
     serializer_class = ProjectListSerializer
     detail_serializer_class = ProjectSerializer
     throttle_classes = [UserRateThrottle]
-    permission_classes = [IsAuthenticated,IsAuthor|IsContributor]
+    permission_classes = [IsAuthenticated, IsAuthor | IsContributor]
     # Pas de methode PATCH
-    http_method_names = ['get','post','put','delete']
+    http_method_names = ['get', 'post', 'put', 'delete']
+
     def get_permissions(self):
         if self.action in ['destroy', 'update']:
-            self.permission_classes = [IsAuthenticated,IsAuthor]
+            self.permission_classes = [IsAuthenticated, IsAuthor]
         return super().get_permissions()
-
 
     def get_queryset(self):
         user = self.request.user
         # On affiche uniquement les projets dont l'utilisateur est contributeur
         # ou auteur
-        if self.action == 'list'and user.is_staff is False:
-            queryset = Project.objects.filter(Q(contributors=user)|Q(author_user_id=user))
+        if self.action == 'list' and user.is_staff is False:
+            queryset = Project.objects.filter(Q(contributors=user) | Q(author_user_id=user))
         else:
             queryset = Project.objects.all()
         # Si ajout dans la requete HTTP de ?type=
@@ -114,12 +117,11 @@ class ProjectViewset(MultipleSerializerMixin,
 
 class IssueViewset(MultipleSerializerMixin,
                    ModelViewSet):
-
     serializer_class = IssueListSerializer
     detail_serializer_class = IssueSerializer
     throttle_classes = [UserRateThrottle]
     # permission_classes = [IsAuthenticated,]
-    http_method_names = ['get','post','put','delete']
+    http_method_names = ['get', 'post', 'put', 'delete']
 
     queryset = Issue.objects.all()
 
@@ -129,7 +131,7 @@ class IssueViewset(MultipleSerializerMixin,
         self.project_id = self.kwargs.get("project_pk")
         self.project = get_object_or_404(Project, pk=self.project_id)
         if self.action in ['destroy', 'update']:
-            return [IsAuthenticated(),IsAuthor()]
+            return [IsAuthenticated(), IsAuthor()]
 
         return [IsAuthenticated(), CustomIsProjectAuthorOrContrib(project=self.project)]
 
@@ -141,15 +143,15 @@ class IssueViewset(MultipleSerializerMixin,
                         assignee_user_id=self.request.user,
                         project_id=self.project)
 
+
 class CommentViewset(MultipleSerializerMixin,
                      ModelViewSet):
-
     serializer_class = CommentListSerializer
     detail_serializer_class = CommentSerializer
     throttle_classes = [UserRateThrottle]
-    permission_classes = [IsAuthenticated,IsAuthor]
+    permission_classes = [IsAuthenticated, IsAuthor]
     # Pas de methode PATCH
-    http_method_names = ['get','post','put','delete']
+    http_method_names = ['get', 'post', 'put', 'delete']
 
     queryset = Comment.objects.all()
 
@@ -162,7 +164,7 @@ class CommentViewset(MultipleSerializerMixin,
         self.project_id = self.kwargs.get("project_pk")
         self.project = get_object_or_404(Project, pk=self.project_id)
         if self.action in ['destroy', 'update']:
-                return [IsAuthenticated(),IsAuthor()]
+            return [IsAuthenticated(), IsAuthor()]
 
         return [IsAuthenticated(), CustomIsProjectAuthorOrContrib(project=self.project)]
 
@@ -176,15 +178,15 @@ class CommentViewset(MultipleSerializerMixin,
         serializer.save(author_user_id=self.request.user,
                         issue_id=issue)
 
+
 class ContributorViewset(MultipleSerializerMixin,
                          ModelViewSet):
-
     serializer_class = ContributorListSerializer
     detail_serializer_class = ContributorSerializer
     throttle_classes = [UserRateThrottle]
     # permission_classes = [IsAuthenticated,]
     # Pas de methode PATCH ni PUT
-    http_method_names = ['get','post','delete']
+    http_method_names = ['get', 'post', 'delete']
 
     queryset = Contributor.objects.all()
 
@@ -205,10 +207,11 @@ class ContributorViewset(MultipleSerializerMixin,
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try :
-            self.perform_create(serializer) # Calls serializer.save()
+        try:
+            self.perform_create(serializer)  # Calls serializer.save()
         except IntegrityError:
-            return Response({"Error": "this user is already a contributor for this project" }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Error": "this user is already a contributor for this project"},
+                            status=status.HTTP_400_BAD_REQUEST)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -230,4 +233,4 @@ class ReplaceUserView(APIView):
         # TODO : assignee
         comments = Comment.objects.filter(author_user_id=user_id)
 
-        #return Response(status=status.HTTP_200_OK)
+        # return Response(status=status.HTTP_200_OK)

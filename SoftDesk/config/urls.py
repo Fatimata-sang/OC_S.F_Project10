@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-#urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls'))
-#]
+# urlpatterns = [
+# path('admin/', admin.site.urls),
+# path('api/', include('api.urls'))
+# ]
 
 
 from rest_framework_simplejwt.views import (
@@ -35,6 +35,7 @@ from api.views import (
     ContributorViewset,
     ReplaceUserView
 )
+
 # Ici nous créons notre routeur
 project_router = routers.SimpleRouter()
 # Puis lui déclarons une url basée sur le mot clé ‘category’ et notre view
@@ -77,7 +78,6 @@ contributor_router.register(
     ContributorViewset,
     basename='project-contributor'
 )
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
