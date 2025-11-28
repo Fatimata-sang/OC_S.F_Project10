@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48f2fa68-fe9d-4632-83d2-98dbca66746f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/api/permissions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SoftDesk/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoftDesk/config/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SoftDesk/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/SoftDesk/config/urls.py" afterDir="false" />
