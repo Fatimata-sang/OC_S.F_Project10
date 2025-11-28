@@ -18,11 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id","username","email"]
+        fields = ["id", "username", "email"]
 
 
 class IssueSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Issue
         fields = ['id', 'title', 'description', 'tag', 'priority', 'status']
@@ -31,7 +30,7 @@ class IssueSerializer(serializers.ModelSerializer):
 class IssueListSerializer(serializers.ModelSerializer):
     author_user_id = UserListSerializer()
     assignee_user_id = UserListSerializer()
-    
+
     class Meta:
         model = Issue
         fields = [
@@ -48,7 +47,6 @@ class IssueListSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Project
         fields = ['id', 'title', 'description', 'type']
@@ -58,8 +56,9 @@ class ProjectListSerializer(serializers.HyperlinkedModelSerializer):
     # Nous redéfinissons l'attribut 'issues' qui porte le même nom que dans la liste des champs à afficher
     # en lui précisant un serializer paramétré à 'many=True' car les issues sont multiples pour une catégorie
     issues = IssueSerializer(many=True)
+    # project_author = UserSerializer()
     author_user_id = UserListSerializer()
-    
+
     class Meta:
         model = Project
         fields = ['id', 'title', 'description', 'type', 'issues', 'author_user_id']
@@ -73,7 +72,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     author_user_id = UserListSerializer()
-    
+
     class Meta:
         model = Comment
         fields = [
@@ -92,7 +91,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 class ContributorListSerializer(serializers.ModelSerializer):
     user_id = UserListSerializer()
-    
+
     class Meta:
         model = Contributor
         fields = ['id', 'user_id', 'project_id']
