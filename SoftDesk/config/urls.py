@@ -14,20 +14,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
 
 # urlpatterns = [
 # path('admin/', admin.site.urls),
 # path('api/', include('api.urls'))
 # ]
-
+import rest_framework
+from django.contrib import admin
+from django.urls import path, include
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from api.views import (
+
+from SoftDesk.api.views import (
     RegisterView,
     ProjectViewset,
     IssueViewset,
@@ -37,13 +38,13 @@ from api.views import (
 )
 
 # Ici nous créons notre routeur
-project_router = routers.SimpleRouter()
+project_router = rest_framework.routers.SimpleRouter()
 # Puis lui déclarons une url basée sur le mot clé ‘category’ et notre view
 # afin que l’url générée soit celle que nous souhaitons ‘/api/category/’
 project_router.register('projects', ProjectViewset, basename='projects')
 
 # Nested routers
-issue_router = routers.NestedSimpleRouter(
+issue_router = rest_framework.routers.NestedSimpleRouter(
     project_router,
     r'projects',
     lookup='project'
@@ -55,7 +56,7 @@ issue_router.register(
     basename='project-issue'
 )
 
-comment_router = routers.NestedSimpleRouter(
+comment_router = rest_framework.routers.NestedSimpleRouter(
     issue_router,
     r'issues',
     lookup='issue'
@@ -67,7 +68,7 @@ comment_router.register(
     basename='issue-comment'
 )
 
-contributor_router = routers.NestedSimpleRouter(
+contributor_router = rest_framework.routers.NestedSimpleRouter(
     project_router,
     r'projects',
     lookup='project'

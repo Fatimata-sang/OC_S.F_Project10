@@ -1,10 +1,5 @@
-from django.shortcuts import render
-
-from django.http import JsonResponse
-
 # def home(request):
 #   return JsonResponse({'info': 'django', 'name': 'fatim', 'prénom': 'SA'})
-from django.shortcuts import render
 from django.db.models import Q
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
@@ -12,17 +7,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from api.permissions import (
+from SoftDesk.api.permissions import (
     IsAuthenticated,
     IsAuthor,
     IsContributor,
     CustomIsProjectAuthorOrContrib
 )
 
-from api.models import (
+from SoftDesk.api.models import (
     Project,
     User,
     Issue,
@@ -30,7 +25,7 @@ from api.models import (
     Contributor
 )
 
-from api.serializers import (
+from SoftDesk.api.serializers import (
     UserSerializer,
     ProjectSerializer,
     ProjectListSerializer,

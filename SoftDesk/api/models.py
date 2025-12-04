@@ -137,6 +137,7 @@ class Contributor(models.Model):
     """
     Pour relation many to many : user <-> project
     """
+    objects = None
     user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
                                 related_name='user_contributions')
