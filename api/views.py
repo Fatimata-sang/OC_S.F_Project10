@@ -10,14 +10,14 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from SoftDesk.api.permissions import (
+from api.permissions import (
     IsAuthenticated,
     IsAuthor,
     IsContributor,
     CustomIsProjectAuthorOrContrib
 )
 
-from SoftDesk.api.models import (
+from api.models import (
     Project,
     User,
     Issue,
@@ -25,7 +25,7 @@ from SoftDesk.api.models import (
     Contributor
 )
 
-from SoftDesk.api.serializers import (
+from api.serializers import (
     UserSerializer,
     ProjectSerializer,
     ProjectListSerializer,

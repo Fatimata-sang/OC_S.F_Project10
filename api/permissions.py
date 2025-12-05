@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from SoftDesk.api.models import Contributor
+from api.models import Contributor
 
 
 class IsAuthor(BasePermission):

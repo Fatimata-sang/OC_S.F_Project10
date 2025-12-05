@@ -28,7 +28,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from SoftDesk.api.views import (
+from api import (
     RegisterView,
     ProjectViewset,
     IssueViewset,
