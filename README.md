@@ -151,15 +151,6 @@ http://localhost:8000/admin
 
 Se connecter avec le superuser.
 
-Linting et tests
-
-La base de code est entièrement lintée et sans erreurs.
-
-Lancer le linting
-
-flake8
-
-
 Tests :
 
 Les endpoints d’inscription et de connexion ne nécessitent pas de token.
