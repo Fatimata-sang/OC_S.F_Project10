@@ -130,11 +130,18 @@ Pour la connexion :
 
 http://localhost:8000/api/login
 
-Interface d’administration
+Interface d’administration et les users qui sont deja dans la base de donnée
 
-Créer un superutilisateur
+admin :
+user : admin
+password : ADMIn12345
 
-python manage.py createsuperuser
+users :
+user : toto
+password : titi2025
+
+user : fatim
+password : fatim2025
 
 
 Accéder à :
@@ -142,7 +149,7 @@ Accéder à :
 http://localhost:8000/admin
 
 
-Se connecter avec le superutilisateur créé.
+Se connecter avec le superuser.
 
 Linting et tests
 
