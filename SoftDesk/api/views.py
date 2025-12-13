@@ -204,11 +204,6 @@ class ContributorViewSet(ModelViewSet):
         self.perform_destroy(instance)
         return Response({"status": "Contributeur retiré avec succès."}, status=204)
 
-
-# ---------------------------------------------------------
-#  ISSUES
-# ---------------------------------------------------------
-
 class IssueViewSet(ModelViewSet):
     """
     Vue permettant de créer, consulter, modifier et supprimer des issues.
@@ -262,9 +257,6 @@ class IssueViewSet(ModelViewSet):
         """
         super().destroy(request, *args, **kwargs)
         return Response({"status": "Issue supprimée avec succès."}, status=204)
-
-
-
 
 class CommentViewSet(ModelViewSet):
     """
