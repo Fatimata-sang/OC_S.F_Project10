@@ -37,11 +37,6 @@ from api.serializers import (
     CommentDetailSerializer,
 )
 
-
-# ---------------------------------------------------------
-#  UTILISATEURS
-# ---------------------------------------------------------
-
 class RegisterView(generics.CreateAPIView):
     """
     Vue permettant l'inscription d'un nouvel utilisateur.
