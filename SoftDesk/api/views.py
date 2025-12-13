@@ -75,11 +75,6 @@ class UserViewSet(ModelViewSet):
         """
         return User.objects.all().order_by("date_joined")
 
-
-# ---------------------------------------------------------
-#  PROJETS
-# ---------------------------------------------------------
-
 class ProjectViewSet(ModelViewSet):
     """
     Vue permettant de créer, consulter, modifier ou supprimer un projet.
