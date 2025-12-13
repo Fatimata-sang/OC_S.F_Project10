@@ -1,3 +1,6 @@
+Créer une API REST sécurisée avec Django REST
+projet n°10
+
 Résumé
 
 Ce projet consiste à développer pour SoftDesk, une entreprise éditrice de logiciels,
