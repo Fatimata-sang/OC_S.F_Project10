@@ -264,9 +264,7 @@ class IssueViewSet(ModelViewSet):
         return Response({"status": "Issue supprimée avec succès."}, status=204)
 
 
-# ---------------------------------------------------------
-#  COMMENTAIRES
-# ---------------------------------------------------------
+
 
 class CommentViewSet(ModelViewSet):
     """
