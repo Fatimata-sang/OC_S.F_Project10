@@ -5,19 +5,19 @@ une API REST sécurisée de suivi des problèmes (issue tracking).
 
 L’application de suivi couvre les trois plateformes (Web, Android et iOS) et permet aux utilisateurs de :
 
-créer des projets,
+créer des projets (projects),
 
-ajouter des utilisateurs comme contributeurs à un projet,
+ajouter des utilisateurs (users) comme contributeurs (contributors)à un projet,
 
-créer des tickets (issues) dans un projet,
+créer des tickets (issues) dans un projet (projects),
 
-ajouter des commentaires à un ticket.
+ajouter des commentaires (comments) à un ticket (issues).
 
-Fonctionnalités
+Les Fonctionnalités
 
-Authentification et Autorisation : accès sécurisé basé sur les rôles et la propriété.
+Authentification et Autorisation : accès sécurisé basé sur les rôles et les propriétés.
 
-Endpoints API : prise en charge complète du CRUD (création, lecture, mise à jour et suppression).
+Endpoints API : prise en charge complète du CRUD (create, read, update, and delete).
 
 Technologies utilisées
 
@@ -40,9 +40,9 @@ Créer des vues pour gérer la logique de l’API.
 Définir les routes URL de l’API.
 
 Appliquer des permissions aux vues pour garantir un accès autorisé.
-| Endpoint API                                | Méthode HTTP | URI                                      | Permission                    |
+| Endpoint API                                | Méthode HTTP | URl                                     | Permission                    |
 | ------------------------------------------- | ------------ | ---------------------------------------- | ----------------------------- |
-| Inscription utilisateur                     | POST         | /signup/                                 | Toute personne ≥ 16 ans       |
+| Inscription utilisateur                     | POST         | /signup/                                 | Toute personne ≥ 18 ans       |
 | Connexion utilisateur                       | POST         | /login/                                  | Utilisateurs enregistrés      |
 | Liste des projets de l’utilisateur connecté | GET          | /projects/                               | Propriétaire et contributeurs |
 | Créer un nouveau projet                     | POST         | /projects/                               | Utilisateurs enregistrés      |

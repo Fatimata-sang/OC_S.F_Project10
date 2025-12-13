@@ -23,7 +23,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         Validation du champ 'age'.
         L'utilisateur doit avoir au minimum 16 ans.
         """
-        if value < 16:
+        if value < 18:
             raise serializers.ValidationError("L’âge doit être supérieur ou égal à 16 ans.")
         return value
 
