@@ -40,47 +40,43 @@ Créer des vues pour gérer la logique de l’API.
 Définir les routes URL de l’API.
 
 Appliquer des permissions aux vues pour garantir un accès autorisé.
+| Endpoint API                                | Méthode HTTP | URI                                      | Permission                    |
+| ------------------------------------------- | ------------ | ---------------------------------------- | ----------------------------- |
+| Inscription utilisateur                     | POST         | /signup/                                 | Toute personne ≥ 16 ans       |
+| Connexion utilisateur                       | POST         | /login/                                  | Utilisateurs enregistrés      |
+| Liste des projets de l’utilisateur connecté | GET          | /projects/                               | Propriétaire et contributeurs |
+| Créer un nouveau projet                     | POST         | /projects/                               | Utilisateurs enregistrés      |
+| Obtenir un projet                           | GET          | /projects/{id}/                          | Propriétaire et contributeurs |
+| Mettre à jour un projet                     | PUT          | /projects/{id}/                          | Propriétaire du projet        |
+| Supprimer un projet et ses issues           | DELETE       | /projects/{id}/                          | Propriétaire du projet        |
+| Ajouter un contributeur à un projet         | POST         | /projects/{id}/contributors/             | Propriétaire du projet        |
+| Lister les utilisateurs d’un projet         | GET          | /projects/{id}/contributors/             | Propriétaire du projet        |
+| Supprimer un utilisateur d’un projet        | DELETE       | /projects/{id}/contributors/{id}         | Propriétaire du projet        |
+| Obtenir les issues d’un projet              | GET          | /projects/{id}/issues/                   | Propriétaire et contributeurs |
+| Créer une issue dans un projet              | POST         | /projects/{id}/issues/                   | Propriétaire et contributeurs |
+| Mettre à jour une issue                     | PUT          | /projects/{id}/issues/{id}               | Propriétaire de l’issue       |
+| Supprimer une issue                         | DELETE       | /projects/{id}/issues/{id}               | Propriétaire de l’issue       |
+| Créer un commentaire sur une issue          | POST         | /projects/{id}/issues/{id}/comments/     | Propriétaire et contributeurs |
+| Lister les commentaires d’une issue         | GET          | /projects/{id}/issues/{id}/comments/     | Propriétaire et contributeurs |
+| Modifier un commentaire                     | PUT          | /projects/{id}/issues/{id}/comments/{id} | Propriétaire du commentaire   |
+| Supprimer un commentaire                    | DELETE       | /projects/{id}/issues/{id}/comments/{id} | Propriétaire du commentaire   |
+| Obtenir un commentaire spécifique           | GET          | /projects/{id}/issues/{id}/comments/{id} | Propriétaire et contributeurs |
 
-Endpoints de l’API
-Endpoint API	Méthode HTTP	URI	Permission
-Inscription utilisateur	POST	/signup/	Toute personne ≥ 16 ans
-Connexion utilisateur	POST	/login/	Utilisateurs enregistrés
-Liste des projets de l’utilisateur connecté	GET	/projects/	Propriétaire et contributeurs
-Créer un nouveau projet	POST	/projects/	Utilisateurs enregistrés
-Obtenir un projet	GET	/projects/{id}/	Propriétaire et contributeurs
-Mettre à jour un projet	PUT	/projects/{id}/	Propriétaire du projet
-Supprimer un projet et ses issues	DELETE	/projects/{id}/	Propriétaire du projet
-Ajouter un contributeur à un projet	POST	/projects/{id}/contributors/	Propriétaire du projet
-Lister les utilisateurs d’un projet	GET	/projects/{id}/contributors/	Propriétaire du projet
-Supprimer un utilisateur d’un projet	DELETE	/projects/{id}/contributors/{id}	Propriétaire du projet
-Obtenir les issues d’un projet	GET	/projects/{id}/issues/	Propriétaire et contributeurs
-Créer une issue dans un projet	POST	/projects/{id}/issues/	Propriétaire et contributeurs
-Mettre à jour une issue	PUT	/projects/{id}/issues/{id}	Propriétaire de l’issue
-Supprimer une issue	DELETE	/projects/{id}/issues/{id}	Propriétaire de l’issue
-Créer un commentaire sur une issue	POST	/projects/{id}/issues/{id}/comments/	Propriétaire et contributeurs
-Lister les commentaires d’une issue	GET	/projects/{id}/issues/{id}/comments/	Propriétaire et contributeurs
-Modifier un commentaire	PUT	/projects/{id}/issues/{id}/comments/{id}	Propriétaire du commentaire
-Supprimer un commentaire	DELETE	/projects/{id}/issues/{id}/comments/{id}	Propriétaire du commentaire
-Obtenir un commentaire spécifique	GET	/projects/{id}/issues/{id}/comments/{id}	Propriétaire et contributeurs
 Développement local
-Prérequis
-
-PostgreSQL installé.
-
-Python 3.6 ou supérieur.
+Ce project a été fait avec : 
+Python 3.10 
 
 Installation sur macOS/Linux
 
 Cloner le dépôt
 
 cd /chemin/vers/le/projet
-git clone https://github.com/Afudu/P10_OpenClassroom.git
+git clone https://github.com/Fatimata-sang/OC_S.F_Project10.git
 
 
 Se déplacer dans le dossier
 
-cd P10_OpenClassroom
-
+cd SoftDesk
 
 Créer un environnement virtuel
 
@@ -118,7 +114,9 @@ Lancer l’application
 
 Démarrer le serveur
 
-cd SoftDesk; python manage.py runserver
+cd SoftDesk
+
+python manage.py runserver
 
 
 Accès via le navigateur
