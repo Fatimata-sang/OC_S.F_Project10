@@ -5,4 +5,4 @@ exclude =
     Lib,
     site-packages,
     __pycache__
-max-line-length = 190
+max-line-length = 200
