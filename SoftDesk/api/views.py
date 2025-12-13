@@ -132,11 +132,6 @@ class ProjectViewSet(ModelViewSet):
         super().destroy(request, *args, **kwargs)
         return Response({"status": "Projet supprimé avec succès."}, status=204)
 
-
-# ---------------------------------------------------------
-#  CONTRIBUTEURS
-# ---------------------------------------------------------
-
 class ContributorViewSet(ModelViewSet):
     """
     Vue permettant d'ajouter, consulter et retirer les contributeurs d’un projet.
