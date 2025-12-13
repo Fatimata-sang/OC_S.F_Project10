@@ -2,26 +2,35 @@ from rest_framework import serializers
 from api.models import User, Project, Issue, Comment
 
 
+# ---------------------------------------------------------
+#  UTILISATEURS
+# ---------------------------------------------------------
+
 class UserCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer used to create a new user.
+    Serializer utilisé pour créer un nouvel utilisateur.
     """
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'password', 'age', 'contact_consent',
-                  'data_share_consent']
+        fields = [
+            'id', 'email', 'username', 'password', 'age',
+            'contact_consent', 'data_share_consent'
+        ]
 
     def validate_age(self, value):
         """
-        Creates custom field-level validation by adding validate_<field_name> method.
-        Reference = https://www.django-rest-framework.org/api-guide/serializers/#object-level-validation
+        Validation du champ 'age'.
+        L'utilisateur doit avoir au minimum 16 ans.
         """
         if value < 16:
-            raise serializers.ValidationError("Age must be 16 or older.")
+            raise serializers.ValidationError("L’âge doit être supérieur ou égal à 16 ans.")
         return value
 
     def create(self, validated_data):
+        """
+        Création d'un nouvel utilisateur avec mot de passe chiffré.
+        """
         user = User(
             email=validated_data["email"],
             username=validated_data["username"],
@@ -29,15 +38,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
             contact_consent=validated_data["contact_consent"],
             data_share_consent=validated_data["data_share_consent"],
         )
-        # password encrypted
         user.set_password(validated_data["password"])
-
-        # save the data in the database
         user.save()
         return user
 
     def update(self, instance, validated_data):
-        # save new data with encrypted passwords
+        """
+        Mise à jour d’un utilisateur avec chiffrement du mot de passe.
+        """
         instance.set_password(validated_data['password'])
         instance.save()
         return instance
@@ -45,10 +53,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display all users in a list view.
+    Serializer pour afficher une liste d’utilisateurs.
     """
-    # url displaying the user's detailed view.
-    url = serializers.HyperlinkedIdentityField(view_name='api:user-detail')
+    url = serializers.HyperlinkedIdentityField(
+        view_name='api:user-detail'
+    )
 
     class Meta:
         model = User
@@ -57,19 +66,26 @@ class UserListSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display a single user with more detailed info.
+    Serializer pour afficher les détails d’un utilisateur.
     """
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'age', 'contact_consent', 'data_share_consent',
-                  'is_superuser', 'date_joined']
+        fields = [
+            'id', 'username', 'email', 'password', 'age',
+            'contact_consent', 'data_share_consent',
+            'is_superuser', 'date_joined'
+        ]
         read_only_fields = ['id', 'username', 'password', 'date_joined', 'is_superuser']
 
 
+# ---------------------------------------------------------
+#  PROJETS
+# ---------------------------------------------------------
+
 class ProjectCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer used to create a project.
+    Serializer utilisé pour créer un projet.
     """
 
     class Meta:
@@ -78,23 +94,25 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Checks that the project has not already been created.
-        Else, a validation error is raised.
-        Reference = https://www.django-rest-framework.org/api-guide/serializers/#object-level-validation
+        Vérifie qu’un projet identique (nom + type)
+        n’existe pas déjà pour cet utilisateur.
         """
-        if (
-                # access project attribute from the viewset
-                self.context["view"].project.filter(name=attrs["name"], type=attrs["type"]).exists()
-        ):
-            raise serializers.ValidationError("A project with the same name and type exists already!")
+        project_queryset = self.context["view"].project
+        name = attrs.get("name")
+        type_ = attrs.get("type")
+
+        if project_queryset.filter(name=name, type=type_).exists():
+            raise serializers.ValidationError(
+                "Un projet avec ce nom et ce type existe déjà."
+            )
+
         return attrs
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
     """
-    Serializer to display a list of projects.
+    Serializer listant les projets de l'utilisateur.
     """
-    # url displaying a project's detailed view.
     url = serializers.HyperlinkedIdentityField(view_name='api:project-detail')
 
     class Meta:
@@ -104,21 +122,27 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer to display the details of a given project.
+    Serializer détaillant un projet.
     """
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'type', 'description', 'author', 'contributors', 'created_time']
+        fields = [
+            'id', 'name', 'type', 'description',
+            'author', 'contributors', 'created_time'
+        ]
 
+
+# ---------------------------------------------------------
+#  CONTRIBUTEURS
+# ---------------------------------------------------------
 
 class ContributorCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display all contributors of a project in a list view
+    Serializer utilisé pour ajouter un contributeur à un projet.
     """
 
-    # We create an attribute 'user', which is write_only and given a value.
-    # It will be used for field-level validations.
+    # ID du user à ajouter, utilisé uniquement en écriture
     user = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -127,30 +151,39 @@ class ContributorCreateSerializer(serializers.ModelSerializer):
 
     def validate_user(self, value):
         """
-        Creates custom field-level validation by adding .validate_<field_name> method.
-        https://www.django-rest-framework.org/api-guide/serializers/#field-level-validation
+        Vérifie que :
+        - l'utilisateur existe,
+        - il n'est pas superuser,
+        - il n'est pas déjà contributeur du projet.
         """
-        # retrieves the first record that matches pk=value
+        project = self.context["view"].project
         user = User.objects.filter(pk=value).first()
 
         if user is None:
-            raise serializers.ValidationError("User does not exist!")
+            raise serializers.ValidationError("Cet utilisateur n'existe pas.")
 
         if user.is_superuser:
-            raise serializers.ValidationError("A Superuser cannot be added as contributor.")
+            raise serializers.ValidationError(
+                "Un superutilisateur ne peut pas être ajouté comme contributeur."
+            )
 
-        if self.context["view"].project.contributors.filter(pk=value).exists():
-            raise serializers.ValidationError("This user is already a contributor of this project.")
+        if project.contributors.filter(pk=value).exists():
+            raise serializers.ValidationError(
+                "Cet utilisateur est déjà contributeur de ce projet."
+            )
 
         return user
 
 
 class ContributorListSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display all contributors of a project in a list view
+    Serializer listant les contributeurs d’un projet.
     """
-    # url of contributor's detailed view.
-    url = serializers.HyperlinkedIdentityField(view_name='api:user-detail', format='html', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(
+        view_name='api:user-detail',
+        format='html',
+        lookup_field='pk'
+    )
 
     class Meta:
         model = User
@@ -159,65 +192,60 @@ class ContributorListSerializer(serializers.ModelSerializer):
 
 class ContributorDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display the details of a single project contributor.
+    Serializer détaillant un contributeur.
     """
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'age', 'contact_consent', 'data_share_consent']
+        fields = [
+            'id', 'username', 'age',
+            'contact_consent', 'data_share_consent'
+        ]
 
+
+# ---------------------------------------------------------
+#  ISSUES
+# ---------------------------------------------------------
 
 class IssueCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer to create and edit an Issue.
+    Serializer pour créer ou modifier une issue.
     """
 
     class Meta:
         model = Issue
         fields = ['id', 'name', 'description', 'tag', 'state', 'priority', 'assignee']
 
-    #def validate(self, attrs):
-        """
-        Checks that the issue has not already been created.
-        Else, a validation error is raised.
-        """
-        #if (self.context["view"].issue.filter(name=attrs.get("name"), tag=attrs.get("tag"),
-         #                                     state=attrs.get("state"),
-          #                                    priority=attrs.get("priority")).exists()):
-        #    raise serializers.ValidationError("This issue exists already!")
-
-       # return attrs
     def validate(self, attrs):
         """
-        Checks that the issue has not already been created.
-        Else, a validation error is raised.
+        Vérifie qu'une issue identique (nom + tag + state + priority)
+        n'existe pas déjà dans le projet.
         """
         name = attrs.get("name")
         tag = attrs.get("tag")
         state = attrs.get("state")
         priority = attrs.get("priority")
 
-        # IMPORTANT : filtrer seulement sur les champs fournis
-        query = self.context["view"].issue
+        queryset = self.context["view"].issue
 
-        if name is not None:
-            query = query.filter(name=name)
-        if tag is not None:
-            query = query.filter(tag=tag)
-        if state is not None:
-            query = query.filter(state=state)
-        if priority is not None:
-            query = query.filter(priority=priority)
+        if name:
+            queryset = queryset.filter(name=name)
+        if tag:
+            queryset = queryset.filter(tag=tag)
+        if state:
+            queryset = queryset.filter(state=state)
+        if priority:
+            queryset = queryset.filter(priority=priority)
 
-        if query.exists():
-            raise serializers.ValidationError("This issue exists already!")
+        if queryset.exists():
+            raise serializers.ValidationError("Cette issue existe déjà.")
 
         return attrs
 
 
 class IssueListSerializer(serializers.ModelSerializer):
     """
-    Serializer to display issues in list view.
+    Serializer listant les issues.
     """
 
     class Meta:
@@ -227,18 +255,24 @@ class IssueListSerializer(serializers.ModelSerializer):
 
 class IssueDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer to display the details of an Issue.
+    Serializer détaillant une issue.
     """
 
     class Meta:
         model = Issue
-        fields = ['id', 'name', 'description', 'tag', 'state', 'priority', 'created_time',
-                  'author', 'assignee', 'project']
+        fields = [
+            'id', 'name', 'description', 'tag', 'state',
+            'priority', 'created_time', 'author', 'assignee', 'project'
+        ]
 
+
+# ---------------------------------------------------------
+#  COMMENTAIRES
+# ---------------------------------------------------------
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer used to create a new Comment for an Issue.
+    Serializer utilisé pour créer un commentaire.
     """
 
     class Meta:
@@ -246,15 +280,20 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description']
 
     def validate_name(self, value):
+        """
+        Vérifie qu’un commentaire portant le même nom n’existe pas déjà.
+        """
         if self.context["view"].comment.filter(name=value).exists():
-            raise serializers.ValidationError("This comment name exists already.")
+            raise serializers.ValidationError(
+                "Un commentaire portant ce nom existe déjà."
+            )
 
         return value
 
 
 class CommentListSerializer(serializers.ModelSerializer):
     """
-    Serializer used to display all comments of an Issue in list view.
+    Serializer listant les commentaires d’une issue.
     """
 
     class Meta:
@@ -264,9 +303,12 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer to display the details of a comment.
+    Serializer détaillant un commentaire.
     """
 
     class Meta:
         model = Comment
-        fields = ['id', 'name', 'description', 'created_time', 'author', 'issue', 'issue_url']
+        fields = [
+            'id', 'name', 'description',
+            'created_time', 'author', 'issue', 'issue_url'
+        ]
